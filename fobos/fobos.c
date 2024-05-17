@@ -418,10 +418,10 @@ int fobos_max2830_init(struct fobos_dev_t * dev)
     fobos_max2830_write_reg(dev, 5, 0x00A0); // Reference Frequency Divider = 1
     fobos_max2830_write_reg(dev, 6, 0x0060);
     fobos_max2830_write_reg(dev, 7, 0x0022);
-    fobos_max2830_write_reg(dev, 8, 0x3420);
+    fobos_max2830_write_reg(dev, 8, 0x3421);
     fobos_max2830_write_reg(dev, 9, 0x03B5);
     fobos_max2830_write_reg(dev, 10, 0x1DA4);
-    fobos_max2830_write_reg(dev, 11, 0x0000);
+    fobos_max2830_write_reg(dev, 11, 0x007F);
     fobos_max2830_write_reg(dev, 12, 0x0140);
     fobos_max2830_write_reg(dev, 13, 0x0E92);
     fobos_max2830_write_reg(dev, 14, 0x033B);
@@ -516,7 +516,7 @@ static const uint16_t rffc507x_regs_default[RFFC507X_REGS_COUNT] =
     0x1e84,   /* 0x0F */
     0x89d8,   /* 0x10 */
     0x9d00,   /* 0x11 */
-    0x2a80,   /* 0x12 */
+    0x2aa0,   /* 0x12 */
     0x0000,   /* 0x13 */
     0x0000,   /* 0x14 */
     0x0000,   /* 0x15 */
@@ -525,7 +525,7 @@ static const uint16_t rffc507x_regs_default[RFFC507X_REGS_COUNT] =
     0x0281,   /* 0x18 */
     0xf00f,   /* 0x19 */
     0x0000,   /* 0x1A */
-    0x0000,   /* 0x1B */
+    0x0005,   /* 0x1B */
     0xc840,   /* 0x1C */
     0x1000,   /* 0x1D */
     0x0005,   /* 0x1E */
