@@ -15,6 +15,7 @@
 //  2024.07.20 - IQ calibration on the fly
 //==============================================================================
 #include <stdio.h>
+#include <limits.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
@@ -68,6 +69,8 @@
 #ifndef LIBUSB_CALL
 #define LIBUSB_CALL
 #endif
+//==============================================================================
+static const float SAMPLE_NORM = (1.0 / (float)(SHRT_MAX >> 2)); // 14 bit ADC
 //==============================================================================
 enum fobos_async_status
 {
@@ -879,8 +882,8 @@ int fobos_rx_open(struct fobos_dev_t ** out_dev, uint32_t index)
                 //======================================================================
                 dev->rx_frequency_band = 0xFFFFFFFF;
                 dev->dev_gpo = 0;
-                dev->rx_scale_re = 1.0f / 32768.0f;
-                dev->rx_scale_im = 1.0f / 32768.0f;
+                dev->rx_scale_re = SAMPLE_NORM;
+                dev->rx_scale_im = SAMPLE_NORM;
                 dev->rx_dc_re = 0.25f;
                 dev->rx_dc_im = 0.25f;
                 dev->rx_avg_re = 0.0f;
@@ -1690,8 +1693,8 @@ void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * data, size_t size
     int16_t * psample = (int16_t *)data;
     int rx_swap_iq = dev->rx_swap_iq ^ FOBOS_SWAP_IQ_HW;
     float sample = 0.0f;
-    float scale_re = 1.0f / 32786.0f;
-    float scale_im = 1.0f / 32786.0f;
+    float scale_re = SAMPLE_NORM;
+    float scale_im = SAMPLE_NORM;
     if (dev->rx_direct_sampling)
     {
         rx_swap_iq = FOBOS_SWAP_IQ_HW;
