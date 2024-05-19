@@ -1632,6 +1632,8 @@ int fobos_rx_set_calibration(struct fobos_dev_t * dev, int state)
                 fobos_rx_set_dev_gpo(dev, dev->dev_gpo);
                 // set frequency direct to max2830
                 fobos_max2830_set_frequency(dev, 2400000000.0, 0);
+                // put max8230 into Rx calibration mode
+                fobos_max2830_write_reg(dev, 6, 0x0061);
                 // disable rffc507x
                 fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x15], 14, 14, 0); // enbl = 0
                 fobos_rffc507x_commit(dev, 0);
@@ -1641,6 +1643,8 @@ int fobos_rx_set_calibration(struct fobos_dev_t * dev, int state)
             break;
             case 2:
             {
+                // put max8230 back into Rx mode
+                fobos_max2830_write_reg(dev, 6, 0x0060);
                 double f = dev->rx_frequency;
                 dev->rx_frequency = 0.0;
                 dev->rx_frequency_band = 0;
