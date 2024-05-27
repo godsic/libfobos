@@ -1346,27 +1346,41 @@ int fobos_rx_set_samplerate(struct fobos_dev_t * dev, double value, double * act
             fobos_rx_set_dev_gpo(dev, dev->dev_gpo);
         }
         dev->rx_lpf_idx = rx_lpf_idx;
-        int rx_bw_idx = dev->rx_bw_idx;
+        uint16_t rx_bw_idx = dev->rx_bw_idx;
+        uint16_t rx_bw_fine_idx = 0U;
         if (value < 15000000.0)
         {
-            rx_bw_idx = 0;
+            // 7.5 MHz
+            rx_bw_idx = 0U;
+            // 0.9
+            rx_bw_fine_idx = 0U;
         }
         else if (value < 17000000.0)
         {
+            // 8.5 MHz
             rx_bw_idx = 1;
+            // 0.9
+            rx_bw_fine_idx = 0U;
         }
         else if (value < 30000000.0)
         {
-            rx_bw_idx = 2;
+            // 8.5 MHz
+            rx_bw_idx = 1;
+            // 1.1
+            rx_bw_fine_idx = 4U;
         }
         else
         {
+            // 18 MHz
             rx_bw_idx = 3;
+            // 1.1
+            rx_bw_fine_idx = 4U;
         }
         if (dev->rx_bw_idx != rx_bw_idx)
         {
             dev->rx_bw_idx = rx_bw_idx;
             fobos_max2830_write_reg(dev, 8, rx_bw_idx | 0x3420);
+            fobos_max2830_write_reg(dev, 7, rx_bw_fine_idx | 0x1020);
         }
 #ifdef FOBOS_PRINT_DEBUG
         printf_internal("lpf_idx =  %i bw_idx = %i\n", rx_lpf_idx, rx_bw_idx);
