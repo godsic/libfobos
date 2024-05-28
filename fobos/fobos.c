@@ -1039,7 +1039,6 @@ int fobos_rx_set_frequency(struct fobos_dev_t * dev, double value, double * actu
                 // set frequencies
                 uint32_t max2830_mhz = 2450;
                 RFFC5071_freq_mhz = max2830_mhz + freq_mhz;
-                RFFC5071_freq_mhz = (RFFC5071_freq_mhz / 5) * 5; // spures prevention
                 fobos_rffc507x_set_lo_frequency(dev, RFFC5071_freq_mhz, &RFFC5071_freq_hz_actual);
                 max2830_freq = (double)(RFFC5071_freq_hz_actual - freq);
                 fobos_max2830_set_frequency(dev, max2830_freq, &max2830_freq_actual);
@@ -1051,7 +1050,6 @@ int fobos_rx_set_frequency(struct fobos_dev_t * dev, double value, double * actu
                 // set frequencies
                 uint32_t max2830_mhz = 2400;
                 RFFC5071_freq_mhz = max2830_mhz - freq_mhz;
-                RFFC5071_freq_mhz = (RFFC5071_freq_mhz / 5) * 5; // spures prevention
                 fobos_rffc507x_set_lo_frequency(dev, RFFC5071_freq_mhz, &RFFC5071_freq_hz_actual);
                 max2830_freq = (double)(RFFC5071_freq_hz_actual + freq);
                 fobos_max2830_set_frequency(dev, max2830_freq, &max2830_freq_actual);
