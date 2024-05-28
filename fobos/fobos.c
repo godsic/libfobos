@@ -574,7 +574,7 @@ int fobos_rffc507x_init(struct fobos_dev_t * dev)
 }
 //==============================================================================
 #define FOBOS_RFFC507X_LO_MAX 5400
-#define FOBOS_RFFC507X_REF_FREQ 25
+#define FOBOS_RFFC507X_REF_FREQ 40
 int fobos_rffc507x_set_lo_frequency(struct fobos_dev_t * dev, int lo_freq_mhz, uint64_t * tune_freq_hz)
 {
     uint32_t lodiv;
@@ -761,8 +761,8 @@ int fobos_si5351c_init(struct fobos_dev_t * dev)
 
     fobos_si5351c_config_pll(dev, 0, 80 * 128 - 512, 0, 1);
 
-    // Configure rffc507x_clk to 25 MHz
-    fobos_si5351c_config_msynth(dev, 0, 32 * 128 - 512, 0, 1, 0);
+    // Configure rffc507x_clk to 40 MHz
+    fobos_si5351c_config_msynth(dev, 0, 20 * 128 - 512, 0, 1, 0);
 
     // Configure max2830_clk to 25 MHz
     fobos_si5351c_config_msynth(dev, 4, 32 * 128 - 512, 0, 1, 0);
