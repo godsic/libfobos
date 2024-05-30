@@ -586,6 +586,11 @@ int fobos_rffc507x_init(struct fobos_dev_t * dev)
         // Wide lock detect range
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x09], 4, 4, 1);
 
+        // Enable KV calibration
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x03], 10, 9, 3);
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x06], 15, 15, 1);
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x07], 15, 15, 1);
+
         // Zero frequency control: Path 1
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 6, 4, 0);      // p1lodiv
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 15, 7, 0);     // p1n
