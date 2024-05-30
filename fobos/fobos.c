@@ -580,6 +580,26 @@ int fobos_rffc507x_init(struct fobos_dev_t * dev)
         // MODE pin = 1, Active PLL Register Bank = 2, Active Mixer = 2;
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x15], 13, 13, 1);
 
+        // Charge pump up enable
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x03], 2, 1, 3);
+
+        // Wide lock detect range
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x09], 4, 4, 1);
+
+        // Zero frequency control: Path 1
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 6, 4, 0);      // p1lodiv
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 15, 7, 0);     // p1n
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 3, 2, 0);      // p1presc
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0D], 15, 0, 0);     // p1nmsb
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0E], 15, 8, 0);     // p1nlsb
+
+        // Zero frequency control: Path 2
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 6, 4, 0);      // p2lodiv
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 15, 7, 0);     // p1n
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 3, 2, 0);      // p1presc
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x10], 15, 0, 0);     // p1nmsb
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x11], 15, 8, 0);     // p1nlsb
+
         fobos_rffc507x_commit(dev, 0);
         return FOBOS_ERR_OK;
     }
