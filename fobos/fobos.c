@@ -586,19 +586,28 @@ int fobos_rffc507x_init(struct fobos_dev_t * dev)
         // Wide lock detect range
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x09], 4, 4, 1);
 
+        // Tune CT calibration parameters
+        // Maximum possible duration
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x02], 14, 10, 31);
+        // Average 128 samples
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x03], 14, 13, 3);
+
         // Enable KV calibration
+        // Average 128 samples
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x03], 10, 9, 3);
+        // Enable KV calibration for Path 1
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x06], 15, 15, 1);
+        // Enable KV calibration for Path 2
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x07], 15, 15, 1);
 
-        // Zero frequency control: Path 1
+        // Zero frequency control for Path 1
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 6, 4, 0);      // p1lodiv
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 15, 7, 0);     // p1n
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 3, 2, 0);      // p1presc
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0D], 15, 0, 0);     // p1nmsb
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0E], 15, 8, 0);     // p1nlsb
 
-        // Zero frequency control: Path 2
+        // Zero frequency control for Path 2
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 6, 4, 0);      // p2lodiv
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 15, 7, 0);     // p1n
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 3, 2, 0);      // p1presc
