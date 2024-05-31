@@ -1066,12 +1066,12 @@ int fobos_rx_set_frequency(struct fobos_dev_t * dev, double value, double * actu
             int upcon = 1;
             if (upcon)
             {
-                // set_if_filter(high);
-                bitclear(dev->dev_gpo, FOBOS_DEV_IF_V1);
-                bitset(dev->dev_gpo, FOBOS_DEV_IF_V2);
+                // set_if_filter(low);
+                bitset(dev->dev_gpo, FOBOS_DEV_IF_V1);
+                bitclear(dev->dev_gpo, FOBOS_DEV_IF_V2);
                 dev->rx_swap_iq = 1;
                 // set frequencies
-                uint32_t max2830_mhz = 2450;
+                uint32_t max2830_mhz = 2350;
                 RFFC5071_freq_mhz = max2830_mhz + freq_mhz;
                 fobos_rffc507x_set_lo_frequency(dev, RFFC5071_freq_mhz, &RFFC5071_freq_hz_actual);
                 max2830_freq = (double)(RFFC5071_freq_hz_actual - freq);
