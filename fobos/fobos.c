@@ -502,33 +502,33 @@ static const uint16_t rffc507x_regs_default[RFFC507X_REGS_COUNT] =
     0x4064,   /* 0x01 */
     0x9055,   /* 0x02 */
     0x2d02,   /* 0x03 */
-    0xacbf,   /* 0x04 */
-    0xacbf,   /* 0x05 */
+    0xb0bf,   /* 0x04 */
+    0xb0bf,   /* 0x05 */
     0x0028,   /* 0x06 */
     0x0028,   /* 0x07 */
-    0xff00,   /* 0x08   1111 1111 0000 0000 */
+    0xfc06,   /* 0x08   1111 1111 0000 0000 */
     0x8220,   /* 0x09   1000 0010 0010 0000 */
     0x0202,   /* 0x0A */
     0x4800,   /* 0x0B   0100 1000 0000 0000*/
-    0x1a94,   /* 0x0C */
-    0xd89d,   /* 0x0D */
-    0x8900,   /* 0x0E */
-    0x1e84,   /* 0x0F */
-    0x89d8,   /* 0x10 */
-    0x9d00,   /* 0x11 */
-    0x2aa0,   /* 0x12 */
+    0x2324,   /* 0x0C */
+    0x6276,   /* 0x0D */
+    0x2700,   /* 0x0E */
+    0x2f16,   /* 0x0F */
+    0x3b13,   /* 0x10 */
+    0xb100,   /* 0x11 */
+    0x2a80,   /* 0x12 */
     0x0000,   /* 0x13 */
     0x0000,   /* 0x14 */
     0x0000,   /* 0x15 */
-    0x0001,   /* 0x16 */
+    0x0000,   /* 0x16 */
     0x4900,   /* 0x17 */
-    0x0281,   /* 0x18 */
+    0x0283,   /* 0x18 */
     0xf00f,   /* 0x19 */
     0x0000,   /* 0x1A */
-    0x0005,   /* 0x1B */
+    0x000F,   /* 0x1B */
     0xc840,   /* 0x1C */
     0x1000,   /* 0x1D */
-    0x0005,   /* 0x1E */
+    0x0001,   /* 0x1E */
 };
 //==============================================================================
 int fobos_rffc507x_commit(struct fobos_dev_t * dev, int force)
@@ -579,6 +579,18 @@ int fobos_rffc507x_init(struct fobos_dev_t * dev)
 
         // MODE pin = 1, Active PLL Register Bank = 2, Active Mixer = 2;
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x15], 13, 13, 1);
+
+        // Best performance settings according to Section 2.1 of "Integrated Synthesizer/Mixer Programming Guide"
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0C], 1, 0, 0);
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x0F], 1, 0, 0);
+
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x08], 7, 1, 0);
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x08], 14, 8, 127);
+
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x04], 12, 8, 12);
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x05], 12, 8, 12);
+
+        fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x1E], 2, 2, 1);
 
         // Charge pump up enable
         fobos_rffc507x_register_modify(&dev->rffc507x_registers_local[0x03], 2, 1, 3);
