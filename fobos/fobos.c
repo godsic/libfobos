@@ -1746,21 +1746,15 @@ void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * data, size_t size
     int16_t * psample = (int16_t *)data;
     int rx_swap_iq = dev->rx_swap_iq ^ FOBOS_SWAP_IQ_HW;
     float sample = 0.0f;
-    float scale_re = SAMPLE_NORM;
-    float scale_im = SAMPLE_NORM;
+    float const scale_re = dev->rx_direct_sampling ? SAMPLE_NORM : dev->rx_scale_re;
+    float const scale_im = dev->rx_direct_sampling ? SAMPLE_NORM : dev->rx_scale_im;
+    float const dc_re = dev->rx_dc_re;
+    float const dc_im = dev->rx_dc_im;
+
     if (dev->rx_direct_sampling)
     {
         rx_swap_iq = FOBOS_SWAP_IQ_HW;
     }
-    else
-    {
-        fobos_rx_calibrate(dev, data, size / 16);
-        scale_re = dev->rx_scale_re;
-        scale_im = dev->rx_scale_im;
-    }
-    float k = 0.005f;
-    float dc_re = dev->rx_dc_re;
-    float dc_im = dev->rx_dc_im;
     float * dst_re = dst_samples;
     float * dst_im = dst_samples + 1;
     if (rx_swap_iq)
@@ -1772,14 +1766,9 @@ void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * data, size_t size
     for (size_t i = 0; i < chunks_count; i++)
     {
         // 0
-        sample = to_signed(psample[0]) * scale_re;
-        dc_re += k * (sample - dc_re);
-        sample -= dc_re;
-        dst_re[0] = sample;
-        sample = to_signed(psample[1]) * scale_im;
-        dc_im += k * (sample - dc_im);
-        sample -= dc_im;
-        dst_im[0] = sample;
+        dst_re[0] = to_signed(psample[0]) * scale_re - dc_re;
+        dst_im[0] = to_signed(psample[1]) * scale_im - dc_im;
+
         // 1
         dst_re[2] = to_signed(psample[2]) * scale_re - dc_re;
         dst_im[2] = to_signed(psample[3]) * scale_im - dc_im;
@@ -1812,8 +1801,6 @@ void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * data, size_t size
         dst_im += 16;
         psample += 16;
     }
-    dev->rx_dc_re = dc_re;
-    dev->rx_dc_im = dc_im;
 }
 //==============================================================================
 int fobos_alloc_buffers(struct fobos_dev_t *dev)
