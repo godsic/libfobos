@@ -1740,10 +1740,10 @@ void fobos_rx_calibrate(struct fobos_dev_t * dev, void * data, size_t size)
 }
 //==============================================================================
 #define FOBOS_SWAP_IQ_HW 1
-void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * data, size_t size, float * dst_samples)
+void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * restrict data, size_t const size, float * restrict dst_samples)
 {
-    size_t complex_samples_count = size / 4;
-    int16_t * psample = (int16_t *)data;
+    size_t const complex_samples_count = size / 4;
+    int16_t * restrict psample = (int16_t *)data;
     int rx_swap_iq = dev->rx_swap_iq ^ FOBOS_SWAP_IQ_HW;
     float sample = 0.0f;
     float const scale_re = dev->rx_direct_sampling ? SAMPLE_NORM : dev->rx_scale_re;
@@ -1762,44 +1762,86 @@ void fobos_rx_convert_samples(struct fobos_dev_t * dev, void * data, size_t size
         dst_re = dst_samples + 1;
         dst_im = dst_samples;
     }
-    size_t chunks_count = complex_samples_count / 8;
-    for (size_t i = 0; i < chunks_count; i++)
+    size_t const chunks_count = complex_samples_count / 8;
+    if (rx_swap_iq)
     {
-        // 0
-        dst_re[0] = to_signed(psample[0]) * scale_re - dc_re;
-        dst_im[0] = to_signed(psample[1]) * scale_im - dc_im;
+        for (size_t i = 0; i < chunks_count; i++)
+        {
+            // 0
+            dst_samples[1] = to_signed(psample[0]) * scale_re - dc_re;
+            dst_samples[0] = to_signed(psample[1]) * scale_im - dc_im;
 
-        // 1
-        dst_re[2] = to_signed(psample[2]) * scale_re - dc_re;
-        dst_im[2] = to_signed(psample[3]) * scale_im - dc_im;
+            // 1
+            dst_samples[3] = to_signed(psample[2]) * scale_re - dc_re;
+            dst_samples[2] = to_signed(psample[3]) * scale_im - dc_im;
 
-        // 2
-        dst_re[4] = to_signed(psample[4]) * scale_re - dc_re;
-        dst_im[4] = to_signed(psample[5]) * scale_im - dc_im;
+            // 2
+            dst_samples[5] = to_signed(psample[4]) * scale_re - dc_re;
+            dst_samples[4] = to_signed(psample[5]) * scale_im - dc_im;
 
-        // 3
-        dst_re[6] = to_signed(psample[6]) * scale_re - dc_re;
-        dst_im[6] = to_signed(psample[7]) * scale_im - dc_im;
+            // 3
+            dst_samples[7] = to_signed(psample[6]) * scale_re - dc_re;
+            dst_samples[6] = to_signed(psample[7]) * scale_im - dc_im;
 
-        // 4
-        dst_re[8] = to_signed(psample[8]) * scale_re - dc_re;
-        dst_im[8] = to_signed(psample[9]) * scale_im - dc_im;
+            // 4
+            dst_samples[9] = to_signed(psample[8]) * scale_re - dc_re;
+            dst_samples[8] = to_signed(psample[9]) * scale_im - dc_im;
 
-        // 5
-        dst_re[10] = to_signed(psample[10]) * scale_re - dc_re;
-        dst_im[10] = to_signed(psample[11]) * scale_im - dc_im;
+            // 5
+            dst_samples[11] = to_signed(psample[10]) * scale_re - dc_re;
+            dst_samples[10] = to_signed(psample[11]) * scale_im - dc_im;
 
-        // 6
-        dst_re[12] = to_signed(psample[12]) * scale_re - dc_re;
-        dst_im[12] = to_signed(psample[13]) * scale_im - dc_im;
+            // 6
+            dst_samples[13] = to_signed(psample[12]) * scale_re - dc_re;
+            dst_samples[12] = to_signed(psample[13]) * scale_im - dc_im;
 
-        // 7
-        dst_re[14] = to_signed(psample[14]) * scale_re - dc_re;
-        dst_im[14] = to_signed(psample[15]) * scale_im - dc_im;
+            // 7
+            dst_samples[15] = to_signed(psample[14]) * scale_re - dc_re;
+            dst_samples[14] = to_signed(psample[15]) * scale_im - dc_im;
 
-        dst_re += 16;
-        dst_im += 16;
-        psample += 16;
+            dst_samples += 16;
+            psample += 16;
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < chunks_count; i++)
+        {
+            // 0
+            dst_samples[0] = to_signed(psample[0]) * scale_re - dc_re;
+            dst_samples[1] = to_signed(psample[1]) * scale_im - dc_im;
+
+            // 1
+            dst_samples[2] = to_signed(psample[2]) * scale_re - dc_re;
+            dst_samples[3] = to_signed(psample[3]) * scale_im - dc_im;
+
+            // 2
+            dst_samples[4] = to_signed(psample[4]) * scale_re - dc_re;
+            dst_samples[5] = to_signed(psample[5]) * scale_im - dc_im;
+
+            // 3
+            dst_samples[6] = to_signed(psample[6]) * scale_re - dc_re;
+            dst_samples[7] = to_signed(psample[7]) * scale_im - dc_im;
+
+            // 4
+            dst_samples[8] = to_signed(psample[8]) * scale_re - dc_re;
+            dst_samples[9] = to_signed(psample[9]) * scale_im - dc_im;
+
+            // 5
+            dst_samples[10] = to_signed(psample[10]) * scale_re - dc_re;
+            dst_samples[11] = to_signed(psample[11]) * scale_im - dc_im;
+
+            // 6
+            dst_samples[12] = to_signed(psample[12]) * scale_re - dc_re;
+            dst_samples[13] = to_signed(psample[13]) * scale_im - dc_im;
+
+            // 7
+            dst_samples[14] = to_signed(psample[14]) * scale_re - dc_re;
+            dst_samples[15] = to_signed(psample[15]) * scale_im - dc_im;
+
+            dst_samples += 16;
+            psample += 16;
+        }
     }
 }
 //==============================================================================
